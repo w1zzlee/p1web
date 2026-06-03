@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tugas Ibril</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e10;
+      --surface: #18181c;
+      --surface2: #222228;
+      --accent: #a78bfa;
+      --accent2: #f472b6;
+      --text: #f4f3ff;
+      --muted: #7c7c90;
+      --border: rgba(255,255,255,0.07);
+      --done-bg: #1a2318;
+      --done-accent: #4ade80;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2.5rem 1rem 4rem;
+    }
+
+    /* Background noise texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container { position: relative; z-index: 1; width: 100%; max-width: 500px; }
+
+    /* Header */
+    .header { margin-bottom: 2rem; }
+    .header-tag {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(167,139,250,0.1);
+      border: 1px solid rgba(167,139,250,0.2);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+    .header h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 8vw, 3rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+    .header h1 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header p {
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* Stats row */
+    .stats {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .stat {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .stat-num.purple { color: var(--accent); }
+    .stat-num.green { color: var(--done-accent); }
+    .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* Input */
+    .input-wrap {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px 6px 6px 16px;
+      transition: border-color 0.2s;
+    }
+    .input-wrap:focus-within { border-color: rgba(167,139,250,0.4); }
+    .input-wrap input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .input-wrap input::placeholder { color: var(--muted); }
+    .add-btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .add-btn:hover { opacity: 0.9; }
+    .add-btn:active { transform: scale(0.97); }
+
+    /* Section label */
+    .section-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    /* List */
+    .todo-list { display: flex; flex-direction: column; gap: 6px; }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      animation: slideIn 0.2s ease;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .todo-item:hover { border-color: rgba(167,139,250,0.2); }
+    .todo-item.done {
+      background: var(--done-bg);
+      border-color: rgba(74,222,128,0.1);
+      opacity: 0.7;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .check-btn {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid var(--muted);
+      background: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+      color: transparent;
+    }
+    .check-btn:hover { border-color: var(--accent); }
+    .todo-item.done .check-btn {
+      background: var(--done-accent);
+      border-color: var(--done-accent);
+      color: #0e0e10;
+    }
+
+    .todo-text {
+      flex: 1;
+      font-size: 14px;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .todo-item.done .todo-text {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    .del-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 4px;
+      border-radius: 8px;
+      display: flex; align-items: center;
+      transition: color 0.15s, background 0.15s;
+    }
+    .del-btn:hover { color: #f87171; background: rgba(248,113,113,0.1); }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 2.5rem 0;
+      color: var(--muted);
+    }
+    .empty-icon {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+      opacity: 0.3;
+    }
+    .empty-state p { font-size: 13px; }
+
+    /* Done section */
+    .done-section { margin-top: 1.5rem; }
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 1rem;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .footer span { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-tag">✦ personal</div>
+      <h1>Tugas<br><span>APUIK</span></h1>
+      <p>Kerjain tugas nya ya anak pintar :)</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num purple" id="count-todo">0</div>
+        <div class="stat-label">Belum selesai</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num green" id="count-done">0</div>
+        <div class="stat-label">Sudah selesai</div>
+      </div>
+    </div>
+
+    <div class="input-wrap">
+      <input type="text" id="todo-input" placeholder="Tulis tugas baru..." autocomplete="off" />
+      <button class="add-btn" id="add-btn">
+        <i class="ti ti-plus"></i> Tambah
+      </button>
+    </div>
+
+    <div class="section-label">Aktif</div>
+    <ul class="todo-list" id="todo-list">
+      <li class="empty-state" id="empty-msg">
+        <div class="empty-icon"><i class="ti ti-clipboard"></i></div>
+        <p>Belum ada tugas ni. Yuk mulai!</p>
+      </li>
+    </ul>
+
+    <div class="done-section" id="done-section" style="display:none">
+      <div class="divider"></div>
+      <div class="section-label">Selesai ✓</div>
+      <ul class="todo-list" id="done-list"></ul>
+    </div>
+
+    <div class="footer">Buatan <span>APUIK</span> ✦</div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
